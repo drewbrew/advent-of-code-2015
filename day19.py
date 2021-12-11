@@ -1,4 +1,4 @@
-from queue import Queue
+import string
 import re
 
 TEST_INPUT = """H => HO
@@ -38,40 +38,14 @@ def part_one(puzzle: list[str]) -> int:
 
 
 def part_two(puzzle: list[str]) -> int:
-    reactions, target = parse_input(puzzle)
-    queue = Queue()
-    queue.put(('e', 0))
-    fewest_steps_found = 1e6
-    intermediates_found = {}
-    while not queue.empty():
-        molecule, steps = queue.get(block=False)
-        if steps > fewest_steps_found:
-            continue
-        try:
-            old_score = intermediates_found[molecule]
-        except KeyError:
-            pass
-        else:
-            if old_score > steps:
-                intermediates_found[molecule] = steps
-            else:
-                continue
-        intermediates_found[molecule] = steps
-        for regex, replacement in reactions:
-            offsets = [match.start() for match in regex.finditer(molecule)]
-            for offset in offsets:
-                intermediate = molecule[:offset] + regex.sub(replacement, molecule[offset:], count=1)
-                if intermediate == target:
-                    print('winner found after', steps)
-                    if steps < fewest_steps_found:
-                        print('winner found after', steps)
-                        fewest_steps_found = steps
-                    continue
-                if intermediate == molecule or len(intermediate) > len(target):
-                    # we're very much on the wrong path as the string can never get shorter
-                    continue
-                queue.put((intermediate, steps + 1))
-    return fewest_steps_found
+    # full credit to
+    # https://www.reddit.com/r/adventofcode/comments/3xflz8/comment/cy4etju/
+    molecule = puzzle[-1]
+    radons = len(list(re.findall('Rn', molecule)))
+    argons = len(list(re.findall('Ar', molecule)))
+    ys = len(list(re.findall('Y', molecule)))
+    total_tokens = len([i for i in molecule if i in string.ascii_uppercase])
+    return total_tokens - radons - argons - (2 * ys) - 1
 
 
 def main():
