@@ -2,16 +2,16 @@ import heapq
 
 TEST_WEIGHTS = list(range(1, 6)) + list(range(7, 12))
 
-def read_input(filename: str = 'day24.txt') -> list[int]:
+
+def read_input(filename: str = "day24.txt") -> list[int]:
     with open(filename) as infile:
         return sorted((int(line.strip()) for line in infile), reverse=True)
-    
+
 
 def get_target_weight(weights: list[int], part_two: bool = False) -> int:
     target = sum(weights) / (3 if not part_two else 4)
     assert target == int(target), target
     return int(target)
-
 
 
 def part_one(weights: list[int], part_two: bool = False) -> int:
@@ -24,10 +24,10 @@ def part_one(weights: list[int], part_two: bool = False) -> int:
 
     queue = []
     for index, value in enumerate(weights):
-        heapq.heappush(queue, ([value], weights[index + 1:]))
-    
+        heapq.heappush(queue, ([value], weights[index + 1 :]))
+
     try:
-        while (next_in_queue := heapq.heappop(queue)):
+        while next_in_queue := heapq.heappop(queue):
             package_list, remaining_weights = next_in_queue
             if len(package_list) > fewest_packages:
                 continue
@@ -53,9 +53,12 @@ def part_one(weights: list[int], part_two: bool = False) -> int:
                 fewest_packages = len(package_list)
                 continue
             for index, next_pkg in enumerate(remaining_weights):
-                heapq.heappush(queue, (package_list + [next_pkg], remaining_weights[index + 1:]))
+                heapq.heappush(
+                    queue, (package_list + [next_pkg], remaining_weights[index + 1 :])
+                )
     except IndexError:
         return best_entanglement
+
 
 def main():
     assert part_one(TEST_WEIGHTS) == 99
@@ -64,5 +67,5 @@ def main():
     print(part_one(read_input(), True))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
